@@ -96,7 +96,7 @@ async function tryReconnectLocalFolderAndReloadExcel() {
     partyView?.setImageResolver?.(resolver);
     onPartyChanged?.();
 
-    setStatus(`Reloaded ${json.count} NPCs from local file ✔`);
+    setStatus(`Reloaded ${json.count} NPCs from local file`);
     return true;
   } catch (e) {
     console.warn("Local file reload failed:", e);

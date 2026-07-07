@@ -29,11 +29,11 @@ function setOptions(select, values, allLabel) {
 
 export function initFiltersUI({ els, dataset }) {
   // dropdowns
-  setOptions(els.origin, uniqueSorted(dataset.map((n) => n.Origin)), "All Origins");
-  setOptions(els.reputation, ["Hostile", "Friendly", "Neutral", "Player"], "All Reputation");
-  setOptions(els.concept, uniqueSorted(dataset.map((n) => n.Concept)), "All Concepts");
-  setOptions(els.gender, uniqueSorted(dataset.map((n) => n.Gender)), "All Genders");
-  setOptions(els.group, uniqueSorted(dataset.map(n => n.Group)), "All Groups");
+  setOptions(els.origin, uniqueSorted(dataset.map((n) => n.Origin)), "Origins");
+  setOptions(els.reputation, ["Hostile", "Friendly", "Neutral", "Player"], "Reputations");
+  setOptions(els.concept, uniqueSorted(dataset.map((n) => n.Concept)), "Concepts");
+  setOptions(els.gender, uniqueSorted(dataset.map((n) => n.Gender)), "Presentations");
+  setOptions(els.group, uniqueSorted(dataset.map(n => n.Group)), "Groups");
   // sort options
   if (els.sort) {
     els.sort.innerHTML = "";

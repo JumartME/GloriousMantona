@@ -15,19 +15,17 @@
 
 </head>
 
-<body class="bg-light">
-    <div class="container py-4">
+<body class="bg-dark text-light">
+    <div class="container py-4 bg-black text-light">
         
         <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between mb-3">
             <div>
-                <h1 class="h3 mb-0">Tales of Excel</h1>
+                <h1 class="h3 mb-0">Tales of Legend : NPC Viewer</h1>
                 <div class="text-secondary small" id="status">No cached data.</div>
             </div>
-            <button id="openDice" class="btn btn-outline-primary" type="button">Roll d12</button>
             
-            <button id="viewParty" class="btn btn-outline-dark" type="button">
-                View Party <span class="badge text-bg-dark" id="partyCount">0</span>
-            </button>
+            
+           
             <div class="d-flex flex-wrap gap-2 align-items-right">
             <button
                 class="btn btn-outline-primary"
@@ -48,45 +46,45 @@
                 <div class="row g-2 align-items-end">
                     <!-- Search: left -->
                     <div class="col-12 col-lg-4">
-                        <label class="form-label mb-1">Search</label>
-                        <input id="q" class="form-control" type="search" placeholder="Search name...">
+                        
+                        <input id="q" class="form-control" type="search" placeholder="Search name">
                     </div>
                     
                     <!-- Dropdowns: centered group -->
-                    <div class="col-12 col-lg-8">
-                        <div class="row g-2 justify-content-center">
+                    <div class="col-16 col-lg-8">
+                        <div class="row g-1 justify-content-center">
                             <div class="col-6 col-md-2">
-                                <label class="form-label mb-1">Gender</label>
+                                
                                 <select id="gender" class="form-select"></select>
                             </div>
                                                         
                             <div class="col-6 col-md-2">
-                                <label class="form-label mb-1">Origin</label>
+                                
                                 <select id="origin" class="form-select"></select>
                             </div>
                             
                             <div class="col-6 col-md-2">
-                                <label class="form-label mb-1">Reputation</label>
+                                
                                 <select id="reputation" class="form-select"></select>
                             </div>
                             <div class="col-6 col-md-2">
-                                <label class="form-label mb-1">Group</label>
+                                
                                 <select id="group" class="form-select"></select>
                             </div>
                             <div class="col-6 col-md-2">
-                                <label class="form-label mb-1">Sort</label>
+                                
                                 <select id="sort" class="form-select"></select>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <hr class="my-3">
+                <hr class="my-2">
                 
                 <!-- Row 2: relation checkboxes left, random button right -->
                 <div class="row g-2 align-items-center">
                     <div class="col-12 col-lg-9">
-                        <label class="form-label mb-1">Relation</label>
+                        
                         <div class="d-flex flex-wrap gap-3 align-items-center">
                             <!-- Visa alla (NOT rel-cb) -->
                             <div class="form-check">
@@ -98,7 +96,7 @@
                             
                             <!-- Relation values (rel-cb) -->
                             <div class="form-check">
-                                <input class="form-check-input rel-cb" type="checkbox" id="relUnknown" value="Unknown">
+                                <input class="form-check-input rel-cb" type="checkbox" id="relUnknown" value="Unknown" checked>
                                 <label class="form-check-label" for="relUnknown">Unknown</label>
                             </div>
                             <div class="form-check">
@@ -110,38 +108,34 @@
                                 <label class="form-check-label" for="relRecruited">Recruited</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input rel-cb" type="checkbox" id="relDefeated" value="Defeated">
+                                <input class="form-check-input rel-cb" type="checkbox" id="relDefeated" value="Defeated" checked>
                                 <label class="form-check-label" for="relDefeated">Defeated</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input rel-cb" type="checkbox" id="relImprisoned" value="Imprisoned">
+                                <input class="form-check-input rel-cb" type="checkbox" id="relImprisoned" value="Imprisoned" checked>
                                 <label class="form-check-label" for="relImprisoned">Imprisoned</label>
                             </div>
                         </div>
                     </div>
                     
                     <div class="col-12 col-lg-3 d-flex justify-content-lg-end">
+                        <button id="openDice" class="btn btn-outline-primary" type="button">D12</button>
                         <button id="randomNpc" class="btn btn-outline-primary w-100 w-lg-auto" type="button">
                             Random NPC
                         </button>
+                        <button id="viewParty" class="btn btn-outline-primary" type="button">
+                        View Party <span class="badge text-bg-dark" id="partyCount">0</span>
+                        </button>
                     </div>
                     
-                    <!-- Count: aligned under, right on large screens -->
-                    <div class="col-12 text-lg-end text-secondary small">
-                        <span id="count">0 shown / 0 total</span>
-                    </div>
                 </div>
                 
             </div>
         </div>
         
         <!-- List -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <div class="fw-semibold">NPCs</div>
-                <div class="text-secondary small">Tap/click a row for details</div>
-            </div>
-            <div id="list"></div>
+        <div class="card">
+            <div id="list" class="bg-dark"></div>
         </div>
     </div>
     <div class="offcanvas offcanvas-end" tabindex="-1" id="dataPanel" aria-labelledby="dataPanelLabel">

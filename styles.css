@@ -6,7 +6,7 @@
 .npc-meta { font-size: .85rem; color: #6c757d; }
 .modal-img {
     width: 100%; height: auto; border-radius: 1rem;
-    border: 1px solid rgba(0,0,0,.1); background: #f1f3f5;
+    border: 1px solid rgba(0,0,0,.1); background: #444444;
 }
 .kv .k { color: #6c757d; }
 .kv .v { font-weight: 500; }
@@ -14,6 +14,7 @@
 .kv .row:last-child { border-bottom: 0; }
 .prewrap { white-space: pre-wrap; }
 
+.card { background: #c0c0c0; border: 0px solid rgba(0,0,0,.12); }
 .npc-card .npc-meta{
   white-space: pre-line;
 }
@@ -23,7 +24,7 @@
     border-radius: 1rem;
     overflow: hidden;
     border: 1px solid rgba(0,0,0,.12);
-    background: #f1f3f5;
+    background: #444444;
     cursor: pointer;
 }
 .party-img {
@@ -86,6 +87,7 @@
   --gap: 14px;
 }
 
+/* INDIVIDUELLA CARDS I GRIDDEN */
 .npc-card{
   display: grid;
   grid-template-columns: var(--thumb-w) 1fr;
@@ -98,7 +100,7 @@
   border-radius: 14px;
 
   border: 1px solid rgba(0,0,0,.12);
-  background: #fff;
+  background: #ffffff;
   box-shadow: 0 2px 10px rgba(0,0,0,.06);
 }
 
@@ -242,20 +244,8 @@
 
 .modal-img-wrap { position: relative; }
 
-.modal-img-nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 40px;
-    height: 40px;
-    border-radius: 999px;
-    border: 1px solid rgba(0,0,0,.15);
-    background: rgba(255,255,255,.85);
-    font-size: 24px;
-    line-height: 38px;
-    padding: 0;
-    cursor: pointer;
-}
+
+
 .modal-img-nav:hover { background: rgba(255,255,255,.95); }
 .modal-img-nav:disabled { opacity: .35; cursor: default; }
 
