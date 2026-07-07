@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ToL NPC-viewer</title>
+    
+    <!-- Bootstrap (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- SheetJS (CDN, non-module) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="./styles.css?v=2">
+
+</head>
+
+<body class="bg-light">
+    <div class="container py-4">
+        
+        <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between mb-3">
+            <div>
+                <h1 class="h3 mb-0">Tales of Excel</h1>
+                <div class="text-secondary small" id="status">No cached data.</div>
+            </div>
+            <button id="openDice" class="btn btn-outline-primary" type="button">Roll d12</button>
+            
+            <button id="viewParty" class="btn btn-outline-dark" type="button">
+                View Party <span class="badge text-bg-dark" id="partyCount">0</span>
+            </button>
+            <div class="d-flex flex-wrap gap-2 align-items-right">
+            <button
+                class="btn btn-outline-primary"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#dataPanel"
+                aria-controls="dataPanel">
+                Data
+            </button>
+            </div>
+        </div>
+        
+        <!-- Filters -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                
+                <!-- Row 1: Search left, dropdown filters centered -->
+                <div class="row g-2 align-items-end">
+                    <!-- Search: left -->
+                    <div class="col-12 col-lg-4">
+                        <label class="form-label mb-1">Search</label>
+                        <input id="q" class="form-control" type="search" placeholder="Search name...">
+                    </div>
+                    
+                    <!-- Dropdowns: centered group -->
+                    <div class="col-12 col-lg-8">
+                        <div class="row g-2 justify-content-center">
+                            <div class="col-6 col-md-2">
+                                <label class="form-label mb-1">Gender</label>
+                                <select id="gender" class="form-select"></select>
+                            </div>
+                                                        
+                            <div class="col-6 col-md-2">
+                                <label class="form-label mb-1">Origin</label>
+                                <select id="origin" class="form-select"></select>
+                            </div>
+                            
+                            <div class="col-6 col-md-2">
+                                <label class="form-label mb-1">Reputation</label>
+                                <select id="reputation" class="form-select"></select>
+                            </div>
+                            <div class="col-6 col-md-2">
+                                <label class="form-label mb-1">Group</label>
+                                <select id="group" class="form-select"></select>
+                            </div>
+                            <div class="col-6 col-md-2">
+                                <label class="form-label mb-1">Sort</label>
+                                <select id="sort" class="form-select"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr class="my-3">
+                
+                <!-- Row 2: relation checkboxes left, random button right -->
+                <div class="row g-2 align-items-center">
+                    <div class="col-12 col-lg-9">
+                        <label class="form-label mb-1">Relation</label>
+                        <div class="d-flex flex-wrap gap-3 align-items-center">
+                            <!-- Visa alla (NOT rel-cb) -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="relAll" >
+                                <label class="form-check-label" for="relAll">All</label>
+                            </div>
+                            
+                            <div class="vr d-none d-md-block"></div>
+                            
+                            <!-- Relation values (rel-cb) -->
+                            <div class="form-check">
+                                <input class="form-check-input rel-cb" type="checkbox" id="relUnknown" value="Unknown">
+                                <label class="form-check-label" for="relUnknown">Unknown</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input rel-cb" type="checkbox" id="relMet" value="Met" checked>
+                                <label class="form-check-label" for="relMet">Met</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input rel-cb" type="checkbox" id="relRecruited" value="Recruited" checked>
+                                <label class="form-check-label" for="relRecruited">Recruited</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input rel-cb" type="checkbox" id="relDefeated" value="Defeated">
+                                <label class="form-check-label" for="relDefeated">Defeated</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input rel-cb" type="checkbox" id="relImprisoned" value="Imprisoned">
+                                <label class="form-check-label" for="relImprisoned">Imprisoned</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 col-lg-3 d-flex justify-content-lg-end">
+                        <button id="randomNpc" class="btn btn-outline-primary w-100 w-lg-auto" type="button">
+                            Random NPC
+                        </button>
+                    </div>
+                    
+                    <!-- Count: aligned under, right on large screens -->
+                    <div class="col-12 text-lg-end text-secondary small">
+                        <span id="count">0 shown / 0 total</span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- List -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <div class="fw-semibold">NPCs</div>
+                <div class="text-secondary small">Tap/click a row for details</div>
+            </div>
+            <div id="list"></div>
+        </div>
+    </div>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="dataPanel" aria-labelledby="dataPanelLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="dataPanelLabel">Data</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+
+    <div class="offcanvas-body">
+
+        <div class="d-grid gap-2">
+            <button id="btnLocalFolder" class="btn btn-outline-primary">
+                Local folder
+            </button>
+            <button id="btnExportXlsx" class="btn btn-outline-success" type="button">
+                Export Excel (local)
+            </button>
+
+            <hr class="my-3">
+
+            <button id="btnOneDriveLink" class="btn btn-primary" type="button">
+                OneDrive-link
+            </button>
+
+            <button id="btnLogout" class="btn btn-outline-dark" type="button">
+                Logg off Onedrive
+            </button>
+
+            <hr class="my-3">
+
+            <button id="btnClearCache" class="btn btn-outline-danger" type="button">
+                Clear cache
+            </button>
+            </div>
+
+            <div class="small text-secondary mt-3">
+        </div>
+    </div>
+    </div>
+
+    <!-- NPC Modal -->
+    <div class="modal fade" id="npcModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title mb-0" id="modalTitle">NPC</h5>
+                        <div class="mt-1 d-flex gap-2 flex-wrap" id="modalBadges"></div>
+                        <div class="text-secondary small" id="modalSubtitle"></div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <!-- left: data -->
+                        <div class="col-12 col-lg-8">
+                            <div class="row g-3">
+                                
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header bg-white fw-semibold">Action</div>
+                                        <div class="card-body">
+                                            <div class="row g-2 align-items-end">
+                                                <div class="col-12 col-md-5">
+                                                    <label class="form-label mb-1">Characteristic</label>
+                                                    <select id="actChar" class="form-select"></select>
+                                                </div>
+                                                <div class="col-12 col-md-5">
+                                                    <label class="form-label mb-1">Skill</label>
+                                                    <select id="actSkill" class="form-select"></select>
+                                                </div>
+                                                <div class="col-12 col-md-2 d-grid">
+                                                    <button id="actRoll" class="btn btn-primary" type="button">Roll</button>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mt-3 p-2 border rounded bg-light" id="actResult" style="min-height:2.25rem;">
+                                                <span class="text-secondary">Choose values and roll.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header bg-white fw-semibold">Traits</div>
+                                        <div class="card-body">
+                                            <div id="charsGrid" class="traits-grid"></div>
+                                            <hr class="my-3">
+                                            <div class="fw-semibold mb-1">Skills</div>
+                                            <div class="prewrap" id="skillsBox"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 col-md-6">
+                                    <div class="card">
+                                        <div class="card-header bg-white fw-semibold">Identity</div>
+                                        <div class="card-body kv" id="kvIdentity"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 col-md-6">
+                                    <div class="card">
+                                        <div class="card-header bg-white fw-semibold">Vitals</div>
+                                        <div class="card-body kv" id="kvVitals"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 col-md-6">
+                                    <div class="card">
+                                        <div class="card-header bg-white fw-semibold">Combat &amp; Powers</div>
+                                        <div class="card-body kv" id="kvCombat"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 col-md-6">
+                                    <div class="card">
+                                        <div class="card-header bg-white fw-semibold">Gear</div>
+                                        <div class="card-body kv" id="kvGear"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header bg-white fw-semibold">Description</div>
+                                        <div class="card-body prewrap" id="descBox"></div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        
+                        <!-- right: image -->
+                        <div class="col-12 col-lg-4">
+                            <div class="modal-img-wrap">
+                                <button id="modalImgPrev" type="button" class="modal-img-nav" aria-label="Previous image">‹</button>
+                                <img id="modalImg" class="modal-img" alt="">
+                                <button id="modalImgNext" type="button" class="modal-img-nav" aria-label="Next image">›</button>
+                                <div id="modalImgCount" class="modal-img-count"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <div class="text-secondary small me-auto" id="modalFooter"></div>
+                    <button id="modalPartyBtn" type="button" class="btn btn-primary">Add to Party</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="partyModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Party</h5>
+                    
+                    <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex align-items-end justify-content-between gap-2 mb-2">
+                    <div class="flex-grow-1">
+                        <label class="form-label small mb-1" for="savedParties">Saved parties</label>
+                        <select id="savedParties" class="form-select form-select-sm"></select>
+                    </div>
+
+                    <div class="d-flex gap-2 ms-auto">
+                        <button id="saveParty" type="button" class="btn btn-sm btn-primary">Save</button>
+                        <button id="loadParty" type="button" class="btn btn-sm btn-outline-primary">Load</button>
+                        <button id="deleteParty" type="button" class="btn btn-sm btn-outline-danger">Delete</button>
+                    </div>
+                    </div>
+
+                    <!-- Active party name -->
+                    <div class="mb-2">
+                    <div class="fw-semibold" id="partyTitle">Party</div>
+                    <div class="text-secondary small" id="partySubtitle"></div>
+                    </div>
+
+                    <div class="row g-3" id="partyGrid"></div>
+                </div>
+                
+                <div class="modal-footer">
+                    <div class="text-secondary small me-auto">Click a portrait to open the NPC modal.</div>
+                    <button id="clearParty" type="button" class="btn btn-outline-danger btn-sm">Clear Party</button>
+
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="diceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title mb-0">d12</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body text-center">
+                    <div class="position-relative d-inline-block" style="width:220px;height:220px;">
+                        <img id="d12Img" alt="d12" style="width:100%;height:100%;object-fit:contain;"
+                        src="data:image/svg+xml;utf8,
+                        <svg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'>
+                            <defs>
+                                <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+                                    <stop offset='0' stop-color='%23ffffff'/>
+                                    <stop offset='1' stop-color='%23dfe4ea'/>
+                                </linearGradient>
+                            </defs>
+                            <polygon points='110,10 200,65 200,155 110,210 20,155 20,65'
+                            fill='url(%23g)' stroke='%23111' stroke-width='4'/>
+                        </svg>"/>
+                        <div id="d12Value"
+                        class="position-absolute top-50 start-50 translate-middle fw-bold"
+                        style="font-size:72px; line-height:1; text-shadow:0 2px 8px rgba(0,0,0,.25);">
+                        —
+                    </div>
+                </div>
+                
+                <div class="mt-3 d-flex justify-content-center gap-2">
+                    <button id="rollD12" type="button" class="btn btn-primary">Roll</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="imgProgressOverlay" class="img-progress-overlay hidden" aria-live="polite">
+  <div class="img-progress-card">
+    <div class="img-progress-title">Loading images…</div>
+    <div id="imgProgressText" class="img-progress-text"></div>
+  </div>
+</div>
+
+<script src="https://alcdn.msauth.net/browser/2.38.2/js/msal-browser.min.js"></script>
+<script type="module" src="./app.js"></script>
+
+</body>
+</html>

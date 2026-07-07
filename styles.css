@@ -1,0 +1,307 @@
+.thumb.missing {
+    display: grid; place-items: center; font-size: 10px; color: #6c757d;
+}
+.npc-row { cursor: pointer; }
+.npc-name { font-weight: 700; }
+.npc-meta { font-size: .85rem; color: #6c757d; }
+.modal-img {
+    width: 100%; height: auto; border-radius: 1rem;
+    border: 1px solid rgba(0,0,0,.1); background: #f1f3f5;
+}
+.kv .k { color: #6c757d; }
+.kv .v { font-weight: 500; }
+.kv .row { padding-top: .25rem; padding-bottom: .25rem; border-bottom: 1px dashed rgba(0,0,0,.08); }
+.kv .row:last-child { border-bottom: 0; }
+.prewrap { white-space: pre-wrap; }
+
+.npc-card .npc-meta{
+  white-space: pre-line;
+}
+
+.party-tile {
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,.12);
+    background: #f1f3f5;
+    cursor: pointer;
+}
+.party-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+}
+.party-name {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: .5rem .75rem;
+    color: white;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0,0,0,.75);
+    background: linear-gradient(to top, rgba(0,0,0,.75), rgba(0,0,0,0));
+}
+.party-remove {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+    background: rgba(255,255,255,.9);
+    border-radius: .5rem;
+    padding: .25rem .5rem;
+}
+.party-remove input { margin-right: .35rem; }
+
+/* Replace list-group layout with a responsive grid of cards */
+/* Listan blir en responsiv grid */
+/* ========= LIST GRID (responsivt antal kort, max 4) ========= */
+#list{
+  display: grid;
+  gap: 12px;
+  align-items: stretch;
+
+  /* default (mobilt) */
+  grid-template-columns: 1fr;
+}
+
+/* >= 576px: 2 kort */
+@media (min-width: 576px){
+  #list{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* >= 992px: 3 kort */
+@media (min-width: 992px){
+  #list{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* >= 1200px: 4 kort (max) */
+@media (min-width: 1200px){
+  #list{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* ========= NPC CARD ========= */
+:root{
+  --thumb-w: 80px;    /* vänsterbildens bredd */
+  --card-pad: 12px;
+  --gap: 14px;
+}
+
+.npc-card{
+  display: grid;
+  grid-template-columns: var(--thumb-w) 1fr;
+  gap: var(--gap);
+
+  /* height is automatic - the card grows with its content, and CSS Grid */
+  /* stretches every card in a row to match the tallest one in that row */
+  min-height: 132px;
+  padding: var(--card-pad);
+  border-radius: 14px;
+
+  border: 1px solid rgba(0,0,0,.12);
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+
+.npc-row{ cursor: pointer; }
+
+/* Thumbnail viewport: stretches to match the card's (row-driven) height */
+.npc-card .thumb{
+  width: var(--thumb-w);
+  height: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #f1f3f5;
+}
+
+.npc-card .thumb .img{
+  width: 100%;
+  height: 200%;
+  display: block;
+  object-fit: cover;
+  object-position: 50% 0%; /* TOPPEN i överkant => kapar botten */
+}
+
+/* Missing-state (du sätter .missing på img) */
+.npc-card .thumb{ position: relative; }
+.npc-card .thumb .img.missing{ opacity: 0; }
+.npc-card .thumb::after{
+  content: "No img";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  color: #6c757d;
+  opacity: 0;
+  pointer-events: none;
+}
+.npc-card .thumb:has(.img.missing)::after{ opacity: 1; }
+
+/* Högerdel: NAME överst, meta i mitten, knapp nere höger */
+.npc-card .npc-body{
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-width: 0;
+}
+
+.npc-card .npc-name{
+  font-weight: 800;
+  font-size: 1.05rem;
+  line-height: 1.1;
+  overflow-wrap: break-word;
+}
+
+.npc-card .npc-meta{
+  margin-top: 4px;
+  color: #6c757d;
+  font-size: .9rem;
+  overflow-wrap: break-word;
+}
+
+.npc-card .party-btn{
+  justify-self: end;
+  align-self: end;
+  white-space: nowrap;
+}
+
+
+.traits-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* mobile: 1 col */
+    gap: .35rem .75rem;
+}
+
+@media (min-width: 992px) {   /* lg+ */
+    .traits-grid {
+        grid-template-columns: repeat(3, 1fr); /* wide: 3 cols */
+    }
+}
+
+.trait-item {
+    display: flex;
+    justify-content: space-between;
+    gap: .5rem;
+    padding: .15rem 0;
+    border-bottom: 1px dashed rgba(0,0,0,.08);
+}
+
+.trait-item .k { color: #6c757d; }
+.trait-item .v { font-weight: 600; }
+
+
+.skills-grid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .5rem .75rem;
+}
+
+@media (min-width: 992px){
+  .skills-grid{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.skill-item{
+  display:flex;
+  justify-content:space-between;
+  gap:.5rem;
+  padding:.25rem .5rem;
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:.5rem;
+  background:#fff;
+}
+
+.skill-item .k{
+  font-weight:600;
+  font-size:.9rem;
+}
+
+.skill-item .v{
+  font-variant-numeric: tabular-nums;
+  font-weight:700;
+}
+
+.party-remove-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.party-remove-btn:hover {
+  background: #dc3545; /* bootstrap danger */
+}
+
+.modal-img-wrap { position: relative; }
+
+.modal-img-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,.15);
+    background: rgba(255,255,255,.85);
+    font-size: 24px;
+    line-height: 38px;
+    padding: 0;
+    cursor: pointer;
+}
+.modal-img-nav:hover { background: rgba(255,255,255,.95); }
+.modal-img-nav:disabled { opacity: .35; cursor: default; }
+
+#modalImgPrev { left: 10px; }
+#modalImgNext { right: 10px; }
+
+.modal-img-count {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    padding: .15rem .45rem;
+    border-radius: .5rem;
+    font-size: .8rem;
+    background: rgba(0,0,0,.6);
+    color: white;
+}
+
+.img-progress-overlay {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 9999;
+}
+
+.img-progress-overlay.hidden {
+  display: none;
+}
+
+.img-progress-card {
+  max-width: 320px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.72);
+  color: #fff;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+  backdrop-filter: blur(6px);
+}
+
+.img-progress-title {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.img-progress-text {
+  font-size: 13px;
+  opacity: 0.95;
+  line-height: 1.35;
+  white-space: pre-line;
+}
