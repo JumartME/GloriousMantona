@@ -36,7 +36,7 @@ import { clearImageStore } from "./modules/imageStore.js";
 
 import { exportNpcsToXlsx } from "./modules/exportXlsx.js";
 
-import { pickLocalRootFolder, loadBundleFromLocalFolder } from "./modules/localFolder.js";
+import { pickLocalXlsxFile, pickLocalImgFolder, loadBundleFromLocalFile } from "./modules/localFolder.js";
 
 let actionUI = null;
 let partyView = null;
@@ -57,18 +57,33 @@ let imageResolver = null;
 
 async function tryReconnectLocalFolderAndReloadExcel() {
   try {
-    const rootHandle = await loadRootHandle();
-    if (!rootHandle) return false;
+    const stored = await loadRootHandle();
+    if (!stored) return false;
 
-    // Kräver ofta att användaren redan gett permission tidigare
-    const ok = await ensureHandlePermission(rootHandle, "read");
-    if (!ok) return false;
+    // Bakåtkompatibelt: gammal lagring var en ren mapp-handle (directory).
+    // Ny lagring är { fileHandle, imgRootHandle } för det fil-baserade flödet.
+    const fileHandle = stored.fileHandle || null;
+    const imgRootHandle = stored.imgRootHandle || null;
 
-    setStatus("Reloading local data.xlsx...");
+    if (!fileHandle) return false; // gammal mapp-baserad lagring stöds inte längre
+
+    const okFile = await ensureHandlePermission(fileHandle, "read");
+    if (!okFile) return false;
+
+    if (imgRootHandle) {
+      const okImg = await ensureHandlePermission(imgRootHandle, "read");
+      if (!okImg) {
+        // Fortsätt ändå utan bilder om bildmappen inte längre är tillgänglig
+        setStatus("Bildmapp otillgänglig, fortsätter utan bilder.");
+      }
+    }
+
+    setStatus("Reloading local Excel file...");
 
     // ✅ Läs om Excel + bygg imageResolver igen
-    const { json, imageResolver: resolver } = await loadBundleFromLocalFolder({
-      rootHandle,
+    const { json, imageResolver: resolver } = await loadBundleFromLocalFile({
+      fileHandle,
+      imgRootHandle,
       parseXlsxBuffer,
       rowsToJson,
       setStatus,
@@ -81,10 +96,10 @@ async function tryReconnectLocalFolderAndReloadExcel() {
     partyView?.setImageResolver?.(resolver);
     onPartyChanged?.();
 
-    setStatus(`Reloaded ${json.count} NPCs from local folder ✔`);
+    setStatus(`Reloaded ${json.count} NPCs from local file ✔`);
     return true;
   } catch (e) {
-    console.warn("Local folder reload failed:", e);
+    console.warn("Local file reload failed:", e);
     return false;
   }
 }
@@ -206,24 +221,42 @@ function applyData(json) {
 // ---------- WIRING ----------
 document.getElementById("btnLocalFolder")?.addEventListener("click", async () => {
   try {
-    const rootHandle = await pickLocalRootFolder();
+    setStatus("Välj en Excel-fil...");
+    const fileHandle = await pickLocalXlsxFile();
 
-    const { json, imageResolver: resolver } = await loadBundleFromLocalFolder({
-      rootHandle,
+    let imgRootHandle = null;
+    const wantsImages = confirm("Vill du även välja en Img-mapp med NPC-bilder?");
+    if (wantsImages) {
+      setStatus("Välj Img-mapp...");
+      try {
+        imgRootHandle = await pickLocalImgFolder();
+      } catch (e) {
+        if (e?.name !== "AbortError") console.error(e);
+        setStatus("Fortsätter utan bilder.");
+      }
+    }
+
+    const { json, imageResolver: resolver } = await loadBundleFromLocalFile({
+      fileHandle,
+      imgRootHandle,
       parseXlsxBuffer,
       rowsToJson,
       setStatus,
     });
 
-    await saveRootHandle(rootHandle); // ✅ rätt
+    await saveRootHandle({ fileHandle, imgRootHandle }); // ✅ sparar bägge handtagen
 
     imageResolver = resolver;
     saveCache(json);
     applyData(json);
     partyView?.setImageResolver?.(imageResolver);
 
-    setStatus(`Loaded ${json.count} NPCs from local folder ✔`);
+    setStatus(`Loaded ${json.count} NPCs from local file ✔`);
   } catch (e) {
+    if (e?.name === "AbortError") {
+      setStatus("Avbrutet.");
+      return;
+    }
     console.error(e);
     alert(e?.message || String(e));
   }

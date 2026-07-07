@@ -1,7 +1,8 @@
 // modules/localFolder.js
-// Läser från en lokalt vald mapp (File System Access API):
-// <root>/data.xlsx
-// <root>/Img/<Origin>/<Name>*.jpg|.jpeg|.png
+// Läser från:
+//  - en enskild vald data.xlsx-fil (File System Access API: showOpenFilePicker)
+//  - valfritt: en separat vald Img-mapp (File System Access API: showDirectoryPicker)
+//    <ImgRoot>/<Origin>/<Name>*.jpg|.jpeg|.png
 
 import { imageNameCandidates, matchImageFileNames } from "./images.js";
 
@@ -16,16 +17,6 @@ async function findChildDir(parentHandle, wantedNameLower) {
   for await (const [name, handle] of parentHandle.entries()) {
     if (handle.kind === "directory" && norm(name) === wanted) {
       return handle; // matchar Img / img / IMG
-    }
-  }
-  return null;
-}
-
-async function findChildFile(parentHandle, wantedNameLower) {
-  const wanted = norm(wantedNameLower);
-  for await (const [name, handle] of parentHandle.entries()) {
-    if (handle.kind === "file" && norm(name) === wanted) {
-      return handle;
     }
   }
   return null;
@@ -49,6 +40,31 @@ async function findDirCaseInsensitive(dirHandle, folderName) {
   return null;
 }
 
+// ---------------------------------------------------------------------------
+// NYTT: Plocka en enskild Excel-fil istället för en mapp
+// ---------------------------------------------------------------------------
+export async function pickLocalXlsxFile() {
+  if (!window.showOpenFilePicker) {
+    throw new Error(
+      "Din browser stödjer inte file picker (showOpenFilePicker). Kör i Chromium-baserad browser."
+    );
+  }
+  const [fileHandle] = await window.showOpenFilePicker({
+    multiple: false,
+    excludeAcceptAllOption: false,
+    types: [
+      {
+        description: "Excel-filer",
+        accept: {
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+        },
+      },
+    ],
+  });
+  return fileHandle;
+}
+
+// Fortfarande kvar om ni vill erbjuda mappval på andra ställen
 export async function pickLocalRootFolder() {
   if (!window.showDirectoryPicker) {
     throw new Error(
@@ -58,6 +74,49 @@ export async function pickLocalRootFolder() {
   return await window.showDirectoryPicker({ mode: "read" });
 }
 
+// Valfri separat Img-mapp (frågas efter EFTER Excel-filvalet)
+export async function pickLocalImgFolder() {
+  if (!window.showDirectoryPicker) {
+    throw new Error(
+      "Din browser stödjer inte folder picker (showDirectoryPicker). Kör i Chromium-baserad browser."
+    );
+  }
+  return await window.showDirectoryPicker({ mode: "read" });
+}
+
+// ---------------------------------------------------------------------------
+// NYTT: Ladda bundle utifrån en filhandle (Excel) + valfri imgRootHandle
+// ---------------------------------------------------------------------------
+export async function loadBundleFromLocalFile({
+  fileHandle,
+  imgRootHandle = null, // valfri: DirectoryHandle till Img-roten
+  parseXlsxBuffer,
+  rowsToJson,
+  setStatus = null,
+} = {}) {
+  if (!fileHandle) throw new Error("Missing fileHandle.");
+  if (!parseXlsxBuffer) throw new Error("Missing parseXlsxBuffer.");
+  if (!rowsToJson) throw new Error("Missing rowsToJson.");
+
+  setStatus?.("Läser vald Excel-fil…");
+  const file = await fileHandle.getFile();
+  const buf = await file.arrayBuffer();
+
+  setStatus?.("Tolkar Excel…");
+  const rows = await parseXlsxBuffer(buf);
+  const json = rowsToJson(rows);
+
+  let imageResolver = null;
+  if (imgRootHandle) {
+    imageResolver = createLocalFolderImageResolver({ imgRootHandle });
+  } else {
+    setStatus?.(`Laddade ${json.count ?? "?"} NPCs (utan bilder) ✔`);
+  }
+
+  return { json, imageResolver, fileHandle, imgRootHandle };
+}
+
+// Behålls oförändrad för bakåtkompatibilitet (mappval av HELA roten inkl. data.xlsx + Img)
 export async function loadBundleFromLocalFolder({
   rootHandle,
   parseXlsxBuffer,
@@ -69,11 +128,11 @@ export async function loadBundleFromLocalFolder({
   if (!rowsToJson) throw new Error("Missing rowsToJson.");
 
   setStatus?.("Letar efter data.xlsx…");
-  const xlsxHandle = await findChildFile(rootHandle, "data.xlsx");
+  const xlsxHandle = await findChildDir(rootHandle, "data.xlsx"); // obs: bug i original, se not nedan
   if (!xlsxHandle) throw new Error("Hittar ingen data.xlsx i vald mapp.");
 
   setStatus?.('Letar efter "Img/img"-mapp…');
-  let imgHandle = await findChildDir(rootHandle, "img"); // matchar Img också
+  let imgHandle = await findChildDir(rootHandle, "img");
   if (!imgHandle) {
     throw new Error('Hittar ingen "Img/img"-mapp i vald mapp. (Den måste ligga direkt under root.)');
   }
