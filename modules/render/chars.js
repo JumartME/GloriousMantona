@@ -8,7 +8,7 @@ export const CHARACTERISTICS = [
   "Wits","Strength","Wisdom"
 ];
 
-export function renderCharsGrid(container, npc, onNpcChanged) {
+export function renderCharsGrid(container, npc) {
   container.innerHTML = "";
 
   for (const k of CHARACTERISTICS) {
@@ -23,13 +23,8 @@ export function renderCharsGrid(container, npc, onNpcChanged) {
     stat.className = "stats";
     stat.textContent = String(toNumber(npc[k]));
 
-/*     input.addEventListener("input", () => {
-      npc[k] = input.value === "" ? "" : Number(input.value);
-      onNpcChanged?.(npc);
-    }); */
-
     row.appendChild(kc);
-    /* row.appendChild(stat); */
+    row.appendChild(stat);
     container.appendChild(row);
   }
 }
