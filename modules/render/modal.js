@@ -23,9 +23,7 @@ export function openNpcModal({
 
   // Image
     const imgEl = qs("modalImg");
-    const prevBtn = qs("modalImgPrev");
-    const nextBtn = qs("modalImgNext");
-    const countEl = qs("modalImgCount");
+
 
     // Load image list lazily, then wire navigation
     (async () => {
@@ -37,33 +35,14 @@ export function openNpcModal({
         if (!images.length) {
         imgEl.removeAttribute("src");
         imgEl.classList.add("missing");
-        countEl.textContent = "";
-        prevBtn.disabled = true;
-        nextBtn.disabled = true;
         return;
         }
         idx = ((i % images.length) + images.length) % images.length;
         await setImgForImageEntry({ imgEl, entry: images[idx], imageResolver });
-        countEl.textContent = images.length > 1 ? `${idx + 1} / ${images.length}` : "";
-        prevBtn.disabled = images.length <= 1;
-        nextBtn.disabled = images.length <= 1;
     }
 
-    prevBtn.onclick = () => show(idx - 1);
-    nextBtn.onclick = () => show(idx + 1);
 
-    // Keyboard support while modal open
-    const onKey = (e) => {
-        if (e.key === "ArrowLeft") show(idx - 1);
-        if (e.key === "ArrowRight") show(idx + 1);
-    };
-    document.addEventListener("keydown", onKey);
-    const modalEl = qs("npcModal");
-    modalEl.addEventListener(
-        "hidden.bs.modal",
-        () => document.removeEventListener("keydown", onKey),
-        { once: true }
-    );
+ 
 
     await show(idx);
     })();
@@ -109,13 +88,13 @@ export function openNpcModal({
     ["Group", npc.Group],
   ]);
 
-  // Vitals / Combat / Gear (som innan)
-  kvSet(qs("kvVitals"), [
+  // Vitals / Combat / Gear (som innan) ----BRA ATT HA KVAR SPARA!!!
+/*   kvSet(qs("kvVitals"), [
     ["Size", npc.Size],
     ["Health", npc.Health],
     ["Spirit", npc.Spirit],
     ["MP", npc.MP],
-  ]);
+  ]); */
 
   kvSet(qs("kvCombat"), [
     ["Magic", npc.Magic],

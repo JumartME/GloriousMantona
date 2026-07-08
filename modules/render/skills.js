@@ -21,7 +21,7 @@ export function renderSkillsGrid(container, npc, onNpcChanged) {
     name.className = "k";
     name.textContent = k;
 
-    const input = document.createElement("input");
+/*     const input = document.createElement("input");
     input.className = "form-control form-control-sm v";
     input.type = "number";
     input.step = "1";
@@ -31,7 +31,7 @@ export function renderSkillsGrid(container, npc, onNpcChanged) {
       npc.skills = npc.skills || {};
       npc.skills[k] = input.value === "" ? "" : Number(input.value);
       onNpcChanged?.(npc);
-    });
+    }); */
 
     item.appendChild(name);
     item.appendChild(input);

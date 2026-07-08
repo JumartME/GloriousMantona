@@ -19,7 +19,7 @@ import {
 
 import { renderList, openNpcModal } from "./modules/render/index.js";
 
-import { initActionUI } from "./modules/action.js";
+//import { initActionUI } from "./modules/action.js";
 import { initDiceUI } from "./modules/dice.js";
 import { initPartyView } from "./modules/partyView.js";
 
@@ -34,11 +34,11 @@ import { initDataPanel } from "./modules/dataPanel.js";
 
 import { clearImageStore } from "./modules/imageStore.js";
 
-import { exportNpcsToXlsx } from "./modules/exportXlsx.js";
+//import { exportNpcsToXlsx } from "./modules/exportXlsx.js";
 
 import { pickLocalXlsxFile, pickLocalImgFolder, loadBundleFromLocalFile } from "./modules/localFolder.js";
 
-let actionUI = null;
+//let actionUI = null;
 let partyView = null;
 window.__npc = window.__npc || {};
 
@@ -118,16 +118,16 @@ function openNpc(npc) {
     },
   });
 
-  actionUI?.setNpc?.(npc);
+  //actionUI?.setNpc?.(npc);
 }
 
 // ---------- DOM ----------
 const els = {
   charsGrid: document.getElementById("charsGrid"),
-  actChar: document.getElementById("actChar"),
-  actSkill: document.getElementById("actSkill"),
-  actRoll: document.getElementById("actRoll"),
-  actResult: document.getElementById("actResult"),
+  //actChar: document.getElementById("actChar"),
+  //actSkill: document.getElementById("actSkill"),
+  //actRoll: document.getElementById("actRoll"),
+  //actResult: document.getElementById("actResult"),
   status: document.getElementById("status"),
   count: document.getElementById("count"),
   list: document.getElementById("list"),
@@ -323,8 +323,8 @@ initDataPanel({
     onPartyChanged();
   },
 
-  exportNpcsToXlsx,
-  skillKeys: SKILL_KEYS,
+  // exportNpcsToXlsx,
+  //skillKeys: SKILL_KEYS,
 });
 
 

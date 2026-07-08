@@ -245,6 +245,17 @@
 .modal-img-wrap { position: relative; }
 
 
+/* Modalen för NPC:or - Headern */
+.modal-header.primary {
+  color: #d8d8d8;
+  background-color: #313131;
+}
+/* Modalen för NPC:or - Body */
+.modal-bg {
+  color: #d8d8d8;
+  background-color: #313131;
+}
+
 
 .modal-img-nav:hover { background: rgba(255,255,255,.95); }
 .modal-img-nav:disabled { opacity: .35; cursor: default; }
