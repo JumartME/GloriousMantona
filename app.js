@@ -19,7 +19,7 @@ import {
 
 import { renderList, openNpcModal } from "./modules/render/index.js";
 
-//import { initActionUI } from "./modules/action.js";
+import { initActionUI } from "./modules/action.js";
 import { initDiceUI } from "./modules/dice.js";
 import { initPartyView } from "./modules/partyView.js";
 
@@ -132,7 +132,7 @@ const els = {
   count: document.getElementById("count"),
   list: document.getElementById("list"),
   randomNpc: document.getElementById("randomNpc"),
-  gender: document.getElementById("gender"),
+  presentation: document.getElementById("presentation"),
   clear: document.getElementById("clear"),
   q: document.getElementById("q"),
   origin: document.getElementById("origin"),
@@ -368,7 +368,7 @@ els.clear?.addEventListener("click", async () => {
 });
 */
 
-[els.q, els.gender, els.origin, els.concept, els.reputation, els.group, els.sort].forEach((el) => {
+[els.q, els.presentation, els.origin, els.concept, els.reputation, els.group, els.sort].forEach((el) => {
   el?.addEventListener("input", render);
   el?.addEventListener("change", render);
 });
@@ -382,7 +382,7 @@ tryReconnectLocalFolderAndReloadExcel();
 initDiceUI();
 
 // init action UI
-actionUI = initActionUI();
+//actionUI = initActionUI();
 
 // init party view
 const findNpcById = (id) => dataset.find(n => n.id === id) || null;

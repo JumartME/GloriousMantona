@@ -229,7 +229,7 @@ export function openNpcModal({ npc, imageResolver, onImageRefResolved, onPartyCh
 
   // Identity
   kv(qs("kvIdentity"), [
-    ["Gender", npc.Gender],
+    ["presentation", npc.presentation],
     ["Age", npc.Age],
     ["Species", npc.Species],
     ["Origin", npc.Origin],

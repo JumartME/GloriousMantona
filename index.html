@@ -43,35 +43,35 @@
             <div class="card-body">
                 
                 <!-- Row 1: Search left, dropdown filters centered -->
-                <div class="row g-2 align-items-end">
+                <div class="row g-2">
                     <!-- Search: left -->
-                    <div class="col-12 col-lg-4">
+                    <div class="col-12 col-lg-2">
                         
                         <input id="q" class="form-control" type="search" placeholder="Search name">
                     </div>
                     
                     <!-- Dropdowns: centered group -->
-                    <div class="col-16 col-lg-8">
-                        <div class="row g-1 justify-content-center">
-                            <div class="col-6 col-md-2">
+                    <div class="col-12 col-lg-10">
+                        <div class="row g-1 justify-content-center justify-content-lg-end">
+                            <div class="col-5 col-md-2">
                                 
-                                <select id="gender" class="form-select"></select>
+                                <select id="presentation" class="form-select"></select>
                             </div>
                                                         
-                            <div class="col-6 col-md-2">
+                            <div class="col-5 col-md-2">
                                 
                                 <select id="origin" class="form-select"></select>
                             </div>
                             
-                            <div class="col-6 col-md-2">
+                            <div class="col-5 col-md-2">
                                 
                                 <select id="reputation" class="form-select"></select>
                             </div>
-                            <div class="col-6 col-md-2">
+                            <div class="col-5 col-md-2">
                                 
                                 <select id="group" class="form-select"></select>
                             </div>
-                            <div class="col-6 col-md-2">
+                            <div class="col-5 col-md-2">
                                 
                                 <select id="sort" class="form-select"></select>
                             </div>
@@ -79,11 +79,11 @@
                     </div>
                 </div>
                 
-                <hr class="my-2">
+                <hr class="my-2 border-0">
                 
                 <!-- Row 2: relation checkboxes left, random button right -->
                 <div class="row g-2 align-items-center">
-                    <div class="col-12 col-lg-9">
+                    <div class="col-12 col-lg-7">
                         
                         <div class="d-flex flex-wrap gap-3 align-items-center">
                             <!-- Visa alla (NOT rel-cb) -->
@@ -118,12 +118,12 @@
                         </div>
                     </div>
                     
-                    <div class="col-12 col-lg-3 d-flex justify-content-lg-end">
-                        <button id="openDice" class="btn btn-outline-primary" type="button">D12</button>
+                    <div class="col-12 col-lg-5 d-flex justify-content-lg-end">
+                        <button id="openDice" class="btn btn-outline-primary w-100 w-lg-auto" type="button">D12</button>
                         <button id="randomNpc" class="btn btn-outline-primary w-100 w-lg-auto" type="button">
                             Random NPC
                         </button>
-                        <button id="viewParty" class="btn btn-outline-primary" type="button">
+                        <button id="viewParty" class="btn btn-outline-primary w-100 w-lg-auto" type="button">
                         View Party <span class="badge text-bg-dark" id="partyCount">0</span>
                         </button>
                     </div>
@@ -135,7 +135,7 @@
         
         <!-- List -->
         <div class="card">
-            <div id="list" class="bg-dark"></div>
+            <div id="list" class="bg-black"></div>
         </div>
     </div>
     <div class="offcanvas offcanvas-end" tabindex="-1" id="dataPanel" aria-labelledby="dataPanelLabel">
@@ -180,7 +180,7 @@
     <div class="modal fade" id="npcModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content modal-bg">
-                <div class="modal-header primary">
+                <div class="modal-header primary border-0">
                     <div>
                         <h5 class="modal-title mb-0" id="modalTitle">NPC</h5>
                         <div class="mt-1 d-flex gap-2 flex-wrap" id="modalBadges"></div>
@@ -228,13 +228,11 @@
                                 </div> -->
                                 
                                 <div class="col-12 col-md-6">
-                                    <div class="card">
+                                    <div class="card mb-1">
                                         <div class="card-header bg-white fw-semibold">Combat &amp; Powers</div>
                                         <div class="card-body kv" id="kvCombat"></div>
                                     </div>
-                                </div>
-                                
-                                <div class="col-12 col-md-6">
+                              
                                     <div class="card">
                                         <div class="card-header bg-white fw-semibold">Gear</div>
                                         <div class="card-body kv" id="kvGear"></div>
@@ -256,7 +254,7 @@
                     </div>
                 </div>
                 
-                <div class="modal-footer">
+                <div class="modal-footer border-0">
                     <div class="text-secondary small me-auto" id="modalFooter"></div>
                     <button id="modalPartyBtn" type="button" class="btn btn-primary">Add to Party</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

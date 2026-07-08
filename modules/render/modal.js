@@ -18,8 +18,8 @@ export function openNpcModal({
 }) {
   qs("modalTitle").textContent = npc.Name;
   qs("modalSubtitle").textContent =
-    [npc.Species, npc.Origin, npc.Concept].filter(Boolean).join(" • ");
-    console.log("NPC debug:", { name: npc?.Name, origin: npc?.Origin, imgCount: npc?._images?.length });
+    [npc.Heritage, npc.Presentation, npc.Concept, npc.Origin].filter(Boolean).join(" • ");
+   /*  console.log("NPC debug:", { name: npc?.Name, origin: npc?.Origin, imgCount: npc?._images?.length }); */
 
   // Image
     const imgEl = qs("modalImg");
@@ -80,9 +80,9 @@ export function openNpcModal({
   );
 
   kvAppend(identityEl, [
-    ["Gender", npc.Gender],
+    ["Presentation", npc.Presentation],
     ["Age", npc.Age],
-    ["Species", npc.Species],
+    ["Heritage", npc.Heritage],
     ["Origin", npc.Origin],
     ["Concept", npc.Concept],
     ["Group", npc.Group],

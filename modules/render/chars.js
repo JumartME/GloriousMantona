@@ -12,16 +12,16 @@ export function renderCharsGrid(container, npc) {
   container.innerHTML = "";
 
   for (const k of CHARACTERISTICS) {
-    const row = document.createElement("div");
-    row.className = "char-item";
+    const row = document.createElement("h6");
+    row.className = "char-item ";
 
-    const kc = document.createElement("p");
+    const kc = document.createElement("span");
     kc.className = "k";
     kc.textContent = k;
 
-    const stat = document.createElement("h3");
+    const stat = document.createElement("span");
     stat.className = "stats";
-    stat.textContent = String(toNumber(npc[k]));
+    stat.textContent = String(": " + toNumber(npc[k]));
 
     row.appendChild(kc);
     row.appendChild(stat);

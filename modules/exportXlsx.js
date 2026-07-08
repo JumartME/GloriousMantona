@@ -23,7 +23,7 @@ function buildWorkbook({
       Reputation: clean(n.Reputation),
       Relation: clean(n.Relation),
 
-      Gender: clean(n.Gender),
+      presentation: clean(n.presentation),
       Age: clean(n.Age),
 
       Size: clean(n.Size),

@@ -32,7 +32,7 @@ export function initFiltersUI({ els, dataset }) {
   setOptions(els.origin, uniqueSorted(dataset.map((n) => n.Origin)), "Origins");
   setOptions(els.reputation, ["Hostile", "Friendly", "Neutral", "Player"], "Reputations");
   setOptions(els.concept, uniqueSorted(dataset.map((n) => n.Concept)), "Concepts");
-  setOptions(els.gender, uniqueSorted(dataset.map((n) => n.Gender)), "Presentations");
+  setOptions(els.presentation, uniqueSorted(dataset.map((n) => n.Presentation)), "Presentations");
   setOptions(els.group, uniqueSorted(dataset.map(n => n.Group)), "Groups");
   // sort options
   if (els.sort) {
@@ -72,14 +72,14 @@ export function matchesFilters({ els, npc }) {
   const origin = els.origin?.value || "";
   const concept = els.concept?.value || "";
   const reputation = els.reputation?.value || "";
-  const gender = els.gender?.value || "";
+  const presentation = els.presentation?.value || "";
   const group = els.group?.value || "";
 
   if (q && !String(npc.Name || "").toLowerCase().includes(q)) return false;
   if (origin && npc.Origin !== origin) return false;
   if (concept && npc.Concept !== concept) return false;
   if (reputation && npc.Reputation !== reputation) return false;
-  if (gender && npc.Gender !== gender) return false;
+  if (presentation && npc.presentation !== presentation) return false;
   if (group && npc.Group !== group) return false;
 
   if (els.relAll && els.relationCbs && !els.relAll.checked) {
